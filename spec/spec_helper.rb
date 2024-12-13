@@ -1,6 +1,9 @@
 # frozen_string_literal: true
 
+require "pry"
 require "oyster/harbor"
+
+Capybara.app = Rack::File.new("spec/fixtures")
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
