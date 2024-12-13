@@ -6,15 +6,11 @@ module Oyster
   module Harbor
     class Page < Section
       def self.url(static_path = nil, &block)
-        # rubocop: disable ThreadSafety/InstanceVariableInClassMethod
         @url_value = static_path || block
-        # rubocop: enable ThreadSafety/InstanceVariableInClassMethod
       end
 
       def self.url_value
-        # rubocop: disable ThreadSafety/InstanceVariableInClassMethod
         @url_value
-        # rubocop: enable ThreadSafety/InstanceVariableInClassMethod
       end
 
       def self.visit(...)

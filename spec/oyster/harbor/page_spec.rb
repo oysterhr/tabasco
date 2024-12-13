@@ -7,7 +7,6 @@ RSpec.describe Oyster::Harbor::Page do
   let(:page_url) { "test_page.html" }
   let(:contact_section_klass) { nil }
 
-  # rubocop: disable RSpec/ExpectInLet
   let(:page_klass) do
     contact_section_klass_value = contact_section_klass
     page_url_value = page_url
@@ -32,7 +31,6 @@ RSpec.describe Oyster::Harbor::Page do
       end
     end
   end
-  # rubocop: enable RSpec/ExpectInLet
 
   describe "scoping capybara node methods" do
     it "scopes the content to the whole page" do
@@ -46,9 +44,9 @@ RSpec.describe Oyster::Harbor::Page do
 
     it "scopes the content to subsections" do
       expect(subject.welcome_header).to have_content("Welcome to the Testing Demo Page")
-      expect(subject.welcome_header).not_to have_content("Contact Section")
+      expect(subject.welcome_header).to have_no_content("Contact Section")
 
-      expect(subject.contact).not_to have_content("Welcome to the Testing Demo Page")
+      expect(subject.contact).to have_no_content("Welcome to the Testing Demo Page")
       expect(subject.contact).to have_content("Contact Section")
     end
 
@@ -58,16 +56,15 @@ RSpec.describe Oyster::Harbor::Page do
       expect(subject.about).to have_content("Article 2")
 
       expect(subject.about.first_article).to have_content("Article 1")
-      expect(subject.about.first_article).not_to have_content("Article 2")
-      expect(subject.about.first_article).not_to have_content("About Section")
+      expect(subject.about.first_article).to have_no_content("Article 2")
+      expect(subject.about.first_article).to have_no_content("About Section")
 
       expect(subject.about.second_article).to have_content("Article 2")
-      expect(subject.about.second_article).not_to have_content("Article 1")
-      expect(subject.about.second_article).not_to have_content("About Section")
+      expect(subject.about.second_article).to have_no_content("Article 1")
+      expect(subject.about.second_article).to have_no_content("About Section")
     end
   end
 
-  # rubocop: disable RSpec/ExpectInLet
   describe "providing defined section classes" do
     let(:contact_section_klass) do
       Class.new(Oyster::Harbor::Section) do
@@ -89,10 +86,9 @@ RSpec.describe Oyster::Harbor::Page do
       expect(subject.contact.header).to have_content("Contact Section")
 
       expect(subject.contact.form).to have_content("Email:")
-      expect(subject.contact.form).not_to have_content("Contact Section")
+      expect(subject.contact.form).to have_no_content("Contact Section")
     end
   end
-  # rubocop: enable RSpec/ExpectInLet
 
   context "when the page fails to load properly" do
     let(:page_url) { "oops_not_found.html" }
@@ -114,7 +110,10 @@ RSpec.describe Oyster::Harbor::Page do
     it "raises Oyster::Harbor::PreconditionNotMetError" do
       # TODO: error message can definitely be improved
       expect { subject.does_not_load_properly }
-        .to raise_error(Oyster::Harbor::PreconditionNotMetError, "has_content!: Expected has_content? to return truthy, but it returned false")
+        .to raise_error(
+          Oyster::Harbor::PreconditionNotMetError,
+          "has_content!: Expected has_content? to return truthy, but it returned false",
+        )
     end
   end
 end

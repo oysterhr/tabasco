@@ -8,8 +8,12 @@ Gem::Specification.new do |spec|
   spec.authors = ["Oyster HR Developers"]
   spec.email = ["developers@oysterhr.com"]
 
-  spec.summary = "Oyster::Harbor is an opinionated page-object framework designed to anchor your system tests in stability, reducing flakiness and simplifying navigation."
-  spec.description = "Oyster::Harbor is an opinionated page-object framework designed to anchor your system tests in stability, reducing flakiness and simplifying navigation."
+  summary = <<~SUMMARY
+    Oyster::Harbor is an opinionated page-object framework designed to anchor your
+    system tests iN stability, reducing flakiness and simplifying navigation.
+  SUMMARY
+  spec.summary = summary
+  spec.description = summary
   spec.homepage = "https://github.com/oysterhr/oyster-harbor"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.0.0"
@@ -33,6 +37,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency "capybara", "~> 3.0"
-  spec.add_development_dependency "rack", "~> 1.0"
-  spec.add_development_dependency "pry", "~> 0.15.0"
+  spec.add_development_dependency "pry"
+  spec.add_development_dependency "rack"
+  spec.add_development_dependency "rubocop-capybara"
+  spec.add_development_dependency "rubocop-performance"
+  spec.add_development_dependency "rubocop-rspec"
 end

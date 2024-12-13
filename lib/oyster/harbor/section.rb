@@ -21,7 +21,6 @@ module Oyster
         attr_reader attributes.last
       end
 
-      # rubocop: disable ThreadSafety/InstanceVariableInClassMethod
       def self.attributes
         @attributes ||= []
       end
@@ -41,7 +40,6 @@ module Oyster
       def self.ensure_loaded_block
         @ensure_loaded_block
       end
-      # rubocop: enable ThreadSafety/InstanceVariableInClassMethod
 
       def self.section(name, klass = nil, test_id: nil, &block)
         test_id = (test_id || name).to_s.tr("_", "-")
@@ -59,7 +57,7 @@ module Oyster
 
           def self.attribute(*)
             raise ArgumentError, "Attributes cannot be defined in anonymous sections. " \
-              "They inherit all arguments from parent pages/sections automatically."
+                                 "They inherit all arguments from parent pages/sections automatically."
           end
 
           # Simple and naive implementation for Anonymous classes
@@ -67,7 +65,6 @@ module Oyster
           # Can be overriden in the inline block anyway
           ensure_loaded { container }
 
-          # rubocop: disable Style/DocumentDynamicEvalDefinition
           class_eval <<~METHOD, __FILE__, __LINE__ + 1
             class << self
               def name
@@ -87,12 +84,11 @@ module Oyster
 
             alias_method :to_s, :inspect
           METHOD
-          # rubocop: ename Style/DocumentDynamicEvalDefinition
 
           class_eval(&block) if block
         end
 
-        define_method(name) do |&block|
+        define_method(name) do |&block_argument|
           instance = instance_variable_get(:"@#{name}")
           unless instance
             inherited_attributes = self.class.attributes.each_with_object({}) do |attr_name, hash|
@@ -106,7 +102,7 @@ module Oyster
             instance_variable_set(:"@#{name}", instance)
           end
 
-          block&.call(instance)
+          block_argument&.call(instance)
           instance
         end
       end
@@ -156,9 +152,9 @@ module Oyster
 
         # raise an error if any of the attributes are not defined in the constructor
         missing_attributes = self.class.attributes - kwargs.keys
-        unless missing_attributes.empty?
-          raise ArgumentError, "Missing attribute(s) passed to #{self.class}: #{missing_attributes}"
-        end
+        return if missing_attributes.empty?
+
+        raise ArgumentError, "Missing attribute(s) passed to #{self.class}: #{missing_attributes}"
       end
 
       def _capybara
