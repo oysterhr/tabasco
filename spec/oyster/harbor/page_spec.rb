@@ -13,7 +13,7 @@ RSpec.describe Oyster::Harbor::Page do
 
     Class.new(described_class) do
       url page_url_value
-      container_test_id "root" # do we want containers on pages?
+      container_test_id :root_container
 
       ensure_loaded { has_content!("Welcome to the Testing Demo Page") }
 
@@ -31,6 +31,7 @@ RSpec.describe Oyster::Harbor::Page do
       end
     end
   end
+
 
   describe "scoping capybara node methods" do
     it "scopes the content to the whole page" do
@@ -65,6 +66,7 @@ RSpec.describe Oyster::Harbor::Page do
     end
   end
 
+  # rubocop: disable RSpec/ExpectInLet
   describe "providing defined section classes" do
     let(:contact_section_klass) do
       Class.new(Oyster::Harbor::Section) do
@@ -89,6 +91,7 @@ RSpec.describe Oyster::Harbor::Page do
       expect(subject.contact.form).to have_no_content("Contact Section")
     end
   end
+  # rubocop: enable RSpec/ExpectInLet
 
   context "when the page fails to load properly" do
     let(:page_url) { "oops_not_found.html" }
@@ -96,7 +99,7 @@ RSpec.describe Oyster::Harbor::Page do
     it "raises an expectation error when trying to use the page object" do
       # TODO: wrap with Oyster::Harbor:: custom error class and improve error message
       expect { subject }
-        .to raise_error(Capybara::ElementNotFound, "Unable to find css \"[data-testid='root']\"")
+        .to raise_error(Capybara::ElementNotFound, "Unable to find css \"[data-testid='root-container']\"")
     end
   end
 

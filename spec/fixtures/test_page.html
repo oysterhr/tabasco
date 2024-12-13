@@ -1,110 +1,120 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Oyster Harbor Testing Demo Page</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header, nav, section, article, aside, footer {
-            padding: 20px;
-            margin: 10px;
-        }
-        header {
-            background-color: #4CAF50;
-            color: white;
-            text-align: center;
-        }
-        nav {
-            background-color: #f4f4f4;
-            border-bottom: 1px solid #ccc;
-        }
-        section {
-            background-color: #eaeaea;
-        }
-        article {
-            background-color: #f9f9f9;
-            border: 1px solid #ddd;
-            margin-bottom: 10px;
-        }
-        aside {
-            background-color: #f1f1f1;
-            border-left: 2px solid #ccc;
-        }
-        footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-        }
-        button, input[type="submit"] {
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            padding: 10px;
-            cursor: pointer;
-        }
-        button:hover, input[type="submit"]:hover {
-            background-color: #45a049;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+      }
+      header,
+      nav,
+      section,
+      article,
+      aside,
+      footer {
+        padding: 20px;
+        margin: 10px;
+      }
+      header {
+        background-color: #4caf50;
+        color: white;
+        text-align: center;
+      }
+      nav {
+        background-color: #f4f4f4;
+        border-bottom: 1px solid #ccc;
+      }
+      section {
+        background-color: #eaeaea;
+      }
+      article {
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        margin-bottom: 10px;
+      }
+      aside {
+        background-color: #f1f1f1;
+        border-left: 2px solid #ccc;
+      }
+      footer {
+        background-color: #333;
+        color: white;
+        text-align: center;
+      }
+      button,
+      input[type="submit"] {
+        background-color: #4caf50;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+      }
+      button:hover,
+      input[type="submit"]:hover {
+        background-color: #45a049;
+      }
     </style>
-</head>
-<body data-testid="root">
-
+  </head>
+  <body data-testid="root-container">
     <header data-testid="welcome-header">
-        <h1>Welcome to the Testing Demo Page</h1>
-        <p>This page is for system testing purposes.</p>
+      <h1>Welcome to the Testing Demo Page</h1>
+      <p>This page is for system testing purposes.</p>
     </header>
 
     <nav data-testid="top-menu">
-        <a href="#home">Home</a> |
-        <a href="#about">About</a> |
-        <a href="#contact">Contact</a>
+      <a href="#home">Home</a> | <a href="#about">About</a> |
+      <a href="#contact">Contact</a>
     </nav>
 
     <section data-testid="home">
-        <h2>Home Section</h2>
-        <p>Welcome to the home section. Here is some introductory content for testing.</p>
-        <button data-testid="home-button">Click Me</button>
+      <h2>Home Section</h2>
+      <p>
+        Welcome to the home section. Here is some introductory content for
+        testing.
+      </p>
+      <button data-testid="home-button">Click Me</button>
     </section>
 
     <section data-testid="about">
-        <h2>About Section</h2>
-        <article data-testid="first-article">
-            <h3>Article 1</h3>
-            <p>This is the first article in the About section.</p>
-        </article>
-        <article data-testid="second-article">
-            <h3>Article 2</h3>
-            <p>This is the second article in the About section.</p>
-        </article>
+      <h2>About Section</h2>
+      <article data-testid="first-article">
+        <h3>Article 1</h3>
+        <p>This is the first article in the About section.</p>
+      </article>
+      <article data-testid="second-article">
+        <h3>Article 2</h3>
+        <p>This is the second article in the About section.</p>
+      </article>
     </section>
 
     <aside>
-        <h2>Additional Information</h2>
-        <p>This is an aside with supplementary information related to the main content.</p>
+      <h2>Additional Information</h2>
+      <p>
+        This is an aside with supplementary information related to the main
+        content.
+      </p>
     </aside>
 
     <section data-testid="contact">
-        <div data-testid="contact-header">
-          <h2>Contact Section</h2>
-        </div>
+      <div data-testid="contact-header">
+        <h2>Contact Section</h2>
+      </div>
 
-        <form action="#" method="post" data-testid="contact-form">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" required><br><br>
-            <label for="email">Email:</label>
-            <input type="email" id="email" name="email" required><br><br>
-            <input type="submit" value="Submit">
-        </form>
+      <form action="#" method="post" data-testid="contact-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required /><br /><br />
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required /><br /><br />
+        <input type="submit" value="Submit" />
+      </form>
     </section>
 
     <footer>
-        <p>&copy; 2024 Testing Demo Page</p>
+      <p>&copy; 2024 Testing Demo Page</p>
     </footer>
-
-</body>
+  </body>
 </html>
