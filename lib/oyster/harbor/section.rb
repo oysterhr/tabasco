@@ -41,6 +41,7 @@ module Oyster
         @ensure_loaded_block
       end
 
+      # rubocop: disable Metrics/MethodLength
       def self.section(name, klass = nil, test_id: nil, &block)
         test_id = (test_id || name).to_s.tr("_", "-")
 
@@ -62,7 +63,7 @@ module Oyster
 
           # Simple and naive implementation for Anonymous classes
           # Will raise a Capybara error if the container cannot be found
-          # Can be overriden in the inline block anyway
+          # Can be overridden in the inline block anyway
           ensure_loaded { container }
 
           class_eval <<~METHOD, __FILE__, __LINE__ + 1
@@ -106,6 +107,7 @@ module Oyster
           instance
         end
       end
+      # rubocop: enable Metrics/MethodLength
 
       # Automatically adds a private precondition method for any has_X? query method added.
       # If a method named `has_<something>?` is defined, we will create a corresponding
@@ -137,6 +139,8 @@ module Oyster
 
         # We don't want to expose the bang method to the outside world
         private bang_method_name
+
+        super
       end
 
       def initialize(**kwargs)

@@ -32,7 +32,6 @@ RSpec.describe Oyster::Harbor::Page do
     end
   end
 
-
   describe "scoping capybara node methods" do
     it "scopes the content to the whole page" do
       expect(subject).to have_content("Welcome to the Testing Demo Page")
