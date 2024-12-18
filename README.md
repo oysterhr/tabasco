@@ -1,14 +1,14 @@
-# <Name TBD>
+# [Name TBD]
 
-<Name TBD> is an opinionated page-object framework designed to anchor your system tests in stability, reducing flakiness and simplifying navigation.
+[NAME TBD] is an opinionated page-object framework designed to anchor your system tests in stability, reducing flakiness and simplifying navigation.
 
-![<Name TBD>](oyster_harbor.webp)
+![NAME TBD](oyster_harbor.webp)
 
 ## Installation
 
 ## Usage
 
-Within <Name TBD>, you can define either page objects or section objects. A page object is actually a special type of section, that defines a url and a visiting behavior, but they're inherently the same thing.
+Within [NAME TBD], you can define either page objects or section objects. A page object is actually a special type of section, that defines a url and a visiting behavior, but they're inherently the same thing.
 
 ### A concrete example
 
