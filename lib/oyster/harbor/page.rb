@@ -15,7 +15,7 @@ module Oyster
 
       def self.visit(...)
         new(...).tap do |instance|
-          instance.send(:_capybara).visit(instance.path)
+          Capybara.current_session.visit(instance.path)
 
           instance.ensure_loaded
         end

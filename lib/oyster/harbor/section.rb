@@ -157,12 +157,6 @@ module Oyster
         raise ArgumentError, "Missing attribute(s) passed to #{self.class}: #{missing_attributes}"
       end
 
-      def _capybara
-        # We just use this as a way to call capybara DSL methods directly
-        # Subclasses should not use this though
-        @_capybara ||= CapybaraAPI.new
-      end
-
       # Instance method to call the stored block
       def ensure_loaded
         unless self.class.ensure_loaded_block
@@ -179,7 +173,7 @@ module Oyster
           raise "Container not configured. Define a container with `container_test_id <test_id>` in #{self.class}."
         end
 
-        @container ||= _capybara.find("[data-testid='#{self.class.test_id}']")
+        @container ||= Capybara.current_session.find("[data-testid='#{self.class.test_id}']")
       end
 
       # Allows this page object to be used as subject of `expect` blocks:
@@ -189,7 +183,7 @@ module Oyster
       (Capybara::Session::NODE_METHODS + [:within]).each do |method|
         class_eval <<~METHOD, __FILE__, __LINE__ + 1
           def #{method}(...)                           # def find(...)
-            wrapping { _capybara.#{method}(...) }      #  wrapping { _capybara.find(...) }
+            wrapping { Capybara.current_session.#{method}(...) }      #  wrapping { Capybara.current_session.find(...) }
           end                                          # end
         METHOD
       end
@@ -203,7 +197,7 @@ module Oyster
         return yield if already_wrapped?
 
         result = nil
-        _capybara.within(container) { result = yield }
+        Capybara.current_session.within(container) { result = yield }
 
         result
       end
@@ -211,7 +205,7 @@ module Oyster
       def already_wrapped?
         own_wrapper_path = container.path
 
-        _capybara.page.send(:scopes).any? { |el| el&.path&.start_with?(own_wrapper_path) }
+        Capybara.current_session.send(:scopes).any? { |el| el&.path&.start_with?(own_wrapper_path) }
       end
     end
   end

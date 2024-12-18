@@ -87,7 +87,7 @@ RSpec.describe Oyster::Harbor::Section do
           end
         end
 
-        # TODO: create custom error 
+        # TODO: create custom error
       end.to raise_error(ArgumentError, /Attributes cannot be defined in anonymous sections/)
     end
 
