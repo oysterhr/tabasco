@@ -11,8 +11,8 @@ RSpec.describe Tabasco::Configuration do
     subject { configuration.dsl }
 
     it "exposes a dsl for writing configuration" do
-      is_expected.to be_a(Tabasco::Configuration::DSL)
-      
+      expect(subject).to be_a(Tabasco::Configuration::DSL)
+
       expect(subject.configuration).to eq(configuration)
     end
 

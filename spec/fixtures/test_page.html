@@ -4,62 +4,14 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Oyster Tabasco Testing Demo Page</title>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-      }
-      header,
-      nav,
-      section,
-      article,
-      aside,
-      footer {
-        padding: 20px;
-        margin: 10px;
-      }
-      header {
-        background-color: #4caf50;
-        color: white;
-        text-align: center;
-      }
-      nav {
-        background-color: #f4f4f4;
-        border-bottom: 1px solid #ccc;
-      }
-      section {
-        background-color: #eaeaea;
-      }
-      article {
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        margin-bottom: 10px;
-      }
-      aside {
-        background-color: #f1f1f1;
-        border-left: 2px solid #ccc;
-      }
-      footer {
-        background-color: #333;
-        color: white;
-        text-align: center;
-      }
-      button,
-      input[type="submit"] {
-        background-color: #4caf50;
-        color: white;
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-      }
-      button:hover,
-      input[type="submit"]:hover {
-        background-color: #45a049;
-      }
-    </style>
+    <link rel="stylesheet" href="styles.css"
   </head>
   <body data-testid="root-container">
+    <div data-portal-container>
+      <h1>Portal Content</h1>
+      <p>This is the portal content.</p>
+    </div>
+
     <header data-testid="welcome-header">
       <h1>Welcome to the Testing Demo Page</h1>
       <p>This page is for system testing purposes.</p>

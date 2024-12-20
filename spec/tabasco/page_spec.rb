@@ -22,6 +22,7 @@ RSpec.describe Tabasco::Page do
       section :about do
         section :first_article
         section :second_article
+        portal :my_portal
       end
       section :contact, contact_section_klass_value
       section :non_existing_section
@@ -30,6 +31,12 @@ RSpec.describe Tabasco::Page do
         ensure_loaded { has_content!("This string does not exist in the contact section") }
       end
     end
+  end
+
+  let(:portal_proc) { proc {} }
+
+  before do
+    allow(Tabasco.configuration).to receive(:portal).and_return(portal_proc)
   end
 
   describe "scoping capybara node methods" do
@@ -116,6 +123,24 @@ RSpec.describe Tabasco::Page do
           Tabasco::PreconditionNotMetError,
           "has_content!: Expected has_content? to return truthy, but it returned false",
         )
+    end
+  end
+
+  describe "portal sections" do
+    it "returns a portal to a DOM element outside the parent section/page according to the configuration" do
+      allow(Tabasco.configuration)
+        .to receive(:portal)
+        .and_return(proc { find("[data-portal-container]") })
+
+      expect(subject.about.my_portal).to be_a(Tabasco::Portal)
+      expect(subject.about.my_portal).to have_content("This is the portal")
+    end
+
+    it "raises an error if the portal is not configured" do
+      allow(Tabasco.configuration).to receive(:portal).and_return(nil)
+
+      expect { subject.about.my_portal }
+        .to raise_error(Tabasco::PortalNotConfigured)
     end
   end
 end

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oyster Tabasco Portal testing page</title>
+    <link rel="stylesheet" href="styles.css"
+  </head>
+  <body data-testid="root-container">
+    <div data-portal-container>
+      <h1>This is the portal</h1>
+      This is a portal element, that can be accessed from internal page objects
+      or sections even though it's not a direct child of the section container.
+      However, this needs to be configured using Tabasco.configure to work.
+    </div>
+
+    <section data-testid="home">
+      <h2>Home Section</h2>
+      <p>
+        Welcome to the home section. Here is some introductory content for
+        testing.
+      </p>
+      <button data-testid="home-button">Click Me</button>
+    </section>
+  </body>
+</html>

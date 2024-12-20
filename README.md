@@ -195,6 +195,49 @@ demo_page.tenant_id                 # ok
 demo_page.main_content.tenant_id    # NoMethodError
 ```
 
+### Portal sections
+
+Sometimes, you'll need to bypass the automatic scoping of sections, and define a nested section that targets a DOM element that is not a children of the parent section container.
+
+A common use case is for targeting the contents of floating elements, such as toast messages, datepickers, popover elements, that are often inserted right below the body element. For this, you can use portals. To do that, you must define a block that finds in the global page scope, your portal elements.
+
+Consider the following html fragment:
+
+```html
+<div data-portal-container>My portal content!</div>
+
+<div data-testid="my_form">...</div>
+```
+
+First, we configure how the portal element is retrieved:
+
+```rb
+Tabasco.configure do |config|
+  config.portal { find("[data-portal-container]") }
+end
+```
+
+You can then define a portal subsection like this:
+
+```rb
+class MyForm < Tabasco::Section
+  container_test_id :my_form
+
+  # ...
+
+  portal :my_portal
+end
+```
+
+The portal will work as a subsection of MyForm, even though it's container is not a child of the form div:
+
+```rb
+my_form_section = MyForm.load
+expect(my_form_section.portal).to have_content("My portal content!")
+```
+
+This is an experimental API. For now it only support a single portal element, and needs to be configured globally, which is a rather strong limitation (although intentional, as we don't want to encourage bypassing section scope). Feedback is welcome.
+
 ### Organizing your directory structure
 
 Ideally, we want every page object to be co-located with their matching spec files. Page tests are placed in `spec/pages` (not `spec/system/pages`), and we encourage you to organize the directory structure following the navigational structure of your app. The goal is to make it intuitive to find the tests for a page by mirroring the navigation structure of your application.
