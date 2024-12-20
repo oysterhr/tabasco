@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    oyster-harbor (0.1.0)
+    tabasco (0.1.0)
       capybara (~> 3.0)
 
 GEM
@@ -91,7 +91,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  oyster-harbor!
+  tabasco!
   pry
   rack
   rake (~> 13.0)

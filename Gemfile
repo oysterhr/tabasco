@@ -2,7 +2,7 @@
 
 source "https://rubygems.org"
 
-# Specify your gem's dependencies in oyster-harbor.gemspec
+# Specify your gem's dependencies in tabasco.gemspec
 gemspec
 
 gem "rake", "~> 13.0"

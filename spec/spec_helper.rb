@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 require "pry"
-require "oyster/harbor"
+require "tabasco"
 
 Capybara.app = Rack::File.new("spec/fixtures")
 

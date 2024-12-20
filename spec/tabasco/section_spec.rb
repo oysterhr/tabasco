@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Oyster::Harbor::Section do
+RSpec.describe Tabasco::Section do
   let(:section_klass) do
     Class.new(described_class) do
       container_test_id "root"
@@ -92,7 +92,7 @@ RSpec.describe Oyster::Harbor::Section do
     end
 
     it "only passes attributes to explicit classes if they define that attribute" do
-      subclass = Class.new(Oyster::Harbor::Section) do
+      subclass = Class.new(Tabasco::Section) do
         ensure_loaded { true }
 
         attribute :user

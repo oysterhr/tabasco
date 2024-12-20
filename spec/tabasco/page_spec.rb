@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe Oyster::Harbor::Page do
+RSpec.describe Tabasco::Page do
   subject { page_klass.visit }
 
   let(:page) { Capybara.current_session }
@@ -68,7 +68,7 @@ RSpec.describe Oyster::Harbor::Page do
   # rubocop: disable RSpec/ExpectInLet
   describe "providing defined section classes" do
     let(:contact_section_klass) do
-      Class.new(Oyster::Harbor::Section) do
+      Class.new(Tabasco::Section) do
         container_test_id "contact"
 
         ensure_loaded { has_content!("Contact Section") }
@@ -96,24 +96,24 @@ RSpec.describe Oyster::Harbor::Page do
     let(:page_url) { "oops_not_found.html" }
 
     it "raises an expectation error when trying to use the page object" do
-      # TODO: wrap with Oyster::Harbor:: custom error class and improve error message
+      # TODO: wrap with Tabasco:: custom error class and improve error message
       expect { subject }
         .to raise_error(Capybara::ElementNotFound, "Unable to find css \"[data-testid='root-container']\"")
     end
   end
 
   it "raises Capybara::ElementNotFound when trying to interact with sections not rendered in the page" do
-    # TODO: wrap with Oyster::Harbor:: custom error class and improve error message
+    # TODO: wrap with Tabasco:: custom error class and improve error message
     expect { subject.non_existing_section }
       .to raise_error(Capybara::ElementNotFound, "Unable to find css \"[data-testid='non-existing-section']\"")
   end
 
   context "when the ensure_loaded block for a section fails" do
-    it "raises Oyster::Harbor::PreconditionNotMetError" do
+    it "raises Tabasco::PreconditionNotMetError" do
       # TODO: error message can definitely be improved
       expect { subject.does_not_load_properly }
         .to raise_error(
-          Oyster::Harbor::PreconditionNotMetError,
+          Tabasco::PreconditionNotMetError,
           "has_content!: Expected has_content? to return truthy, but it returned false",
         )
     end

@@ -2,7 +2,7 @@
 
 [NAME TBD] is an opinionated page-object framework designed to anchor your system tests in stability, reducing flakiness and simplifying navigation.
 
-![NAME TBD](oyster_harbor.webp)
+![NAME TBD](oyster_tabasco.webp)
 
 ## Installation
 
@@ -15,7 +15,7 @@ Within [NAME TBD], you can define either page objects or section objects. A page
 We'll start with an example right away, showing how to define your first page:
 
 ```ruby
-class DemoPage < Oyster::Harbor::Page
+class DemoPage < Tabasco::Page
   attribute :customer_id
   attribute :tenant_id
 
@@ -150,7 +150,7 @@ When your page object gets too complex or large, it might be useful to break it 
 For instance, in the example above, we extracted a `spec/pages/demo_page/main_content.rb` that defines the section object `DemoPage::MainContent`. A possible implementation for this class would look like this:
 
 ```ruby
-class DemoPage::MainContent < Oyster::Harbor::Section
+class DemoPage::MainContent < Tabasco::Section
   container_test_id :main_content # will match [data-testid="main-content"]
 
   attribute :customer_id
@@ -242,7 +242,7 @@ The lines `expect(page).to be_present` are pretty much a NOOP, and we've only ad
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/oyster-harbor. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/oyster-harbor/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/tabasco. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/tabasco/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -250,7 +250,7 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Oyster::Harbor project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/oyster-harbor/blob/main/CODE_OF_CONDUCT.md).
+Everyone interacting in the Tabasco project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/tabasco/blob/main/CODE_OF_CONDUCT.md).
 
 ```
 
