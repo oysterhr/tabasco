@@ -1,14 +1,12 @@
-# [Name TBD]
+# Tabasco
 
-[NAME TBD] is an opinionated page-object framework designed to anchor your system tests in stability, reducing flakiness and simplifying navigation.
-
-![NAME TBD](oyster_tabasco.webp)
+Tabasco is an opinionated page-object framework designed to anchor your system tests in stability, reducing flakiness and simplifying navigation.
 
 ## Installation
 
 ## Usage
 
-Within [NAME TBD], you can define either page objects or section objects. A page object is actually a special type of section, that defines a url and a visiting behavior, but they're inherently the same thing.
+Within Tabasco, you can define either page objects or section objects. A page object is actually a special type of section, that defines a url and a visiting behavior, but they're inherently the same thing.
 
 ### A concrete example
 
@@ -240,9 +238,11 @@ The lines `expect(page).to be_present` are pretty much a NOOP, and we've only ad
 
 ## Development
 
+Clone the repository, install the dependencies and run the tests with bundle exec rspec.
+
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/tabasco. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/[USERNAME]/tabasco/blob/main/CODE_OF_CONDUCT.md).
+Bug reports and pull requests are welcome on GitHub at https://github.com/oysterhr/tabasco. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [code of conduct](https://github.com/oysterhr/tabasco/blob/main/CODE_OF_CONDUCT.md).
 
 ## License
 
@@ -250,8 +250,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Tabasco project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/tabasco/blob/main/CODE_OF_CONDUCT.md).
-
-```
-
-```
+Everyone interacting in the Tabasco project's codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/oysterhr/tabasco/blob/main/CODE_OF_CONDUCT.md).
