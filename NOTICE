@@ -1,0 +1,48 @@
+NOTICE
+
+This project is licensed under the MIT license. It depends on third-party software with their own licenses, which are listed below.
+By using this project, you agree to comply with the terms of the licenses for all dependencies listed above, including their transitive dependencies.
+
+Additional notes:
+- Dependencies licensed under Ruby are dual-licensed under the Ruby License and GPLv2.
+- Some dependencies are licensed under the Apache License, Version 2.0 (the License); you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0.
+
+DEPENDENCIES
+
+addressable: Apache-2.0
+ast: MIT
+bundler: MIT
+capybara: MIT
+coderay: MIT
+diff-lcs: MIT
+json: Ruby
+language_server-protocol: MIT
+matrix: Ruby
+method_source: MIT
+mini_mime: MIT
+nokogiri: MIT
+parallel: MIT
+parser: MIT
+pry: MIT
+public_suffix: MIT
+racc: Ruby
+rack-test: MIT
+rack: MIT
+rainbow: MIT
+rake: MIT
+regexp_parser: MIT
+rspec-core: MIT
+rspec-expectations: MIT
+rspec-mocks: MIT
+rspec-support: MIT
+rspec: MIT
+rubocop-ast: MIT
+rubocop-capybara: MIT
+rubocop-performance: MIT
+rubocop-rspec: MIT
+rubocop: MIT
+ruby-progressbar: MIT
+tabasco: MIT
+unicode-display_width: MIT
+unicode-emoji: MIT
+xpath: MIT
