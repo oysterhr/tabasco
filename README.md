@@ -1,6 +1,10 @@
-# Tabasco
+# 🌶️ Tabasco 🌶️
 
 Tabasco is an opinionated page-object framework designed to anchor your system tests in stability, reducing flakiness and simplifying navigation.
+
+**Disclaimer**: this is an experimental project in its early stages of development. While it is not yet production-ready and may lack some polish, we are committed to improving it over time. We will strive to minimize breaking changes whenever possible, but please be aware that the project may evolve as we refine its features and functionality.
+
+We welcome your feedback and contributions to help us spice things up! 🌶️
 
 ## Installation
 
