@@ -5,12 +5,12 @@ require_relative "lib/tabasco/version"
 Gem::Specification.new do |spec|
   spec.name = "tabasco"
   spec.version = Tabasco::VERSION
-  spec.authors = ["Oyster HR Developers"]
+  spec.authors = ["Oyster HR, Inc. Engineers"]
   spec.email = ["developers@oysterhr.com"]
 
   summary = <<~SUMMARY
-    Tabasco is an opinionated page-object framework designed to anchor your
-    system tests iN stability, reducing flakiness and simplifying navigation.
+    Tabasco is an experimental, opinionated page-object framework designed to anchor your
+    system tests in stability, reducing flakiness and simplifying navigation.
   SUMMARY
   spec.summary = summary
   spec.description = summary
