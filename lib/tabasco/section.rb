@@ -23,7 +23,7 @@ module Tabasco
 
   class Container
     def self.section(name, klass = nil, test_id: nil, &block)
-      test_id = (test_id || name).to_s.tr("_", "-")
+      test_id = prepare_test_id(test_id || name)
 
       define_inline_section(name, klass, inline_superclass: Section) do
         class_eval(&block) if block

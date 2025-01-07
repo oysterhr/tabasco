@@ -3,42 +3,39 @@
 require_relative "container"
 
 module Tabasco
-  class PortalNotConfigured < ::Tabasco::Error; end
-
   class Portal < Container
-    def container
-      @container ||= begin
-        self.class.assert_portal_configured!
+    class MissingHandleError < Error; end
 
-        Capybara.current_session.instance_eval(
-          &Tabasco.configuration.portal
-        )
-      end
+    def self.handle(value = nil)
+      return @handle if value.nil?
+
+      @handle = value.to_sym
     end
 
-    def self.assert_portal_configured!
-      return if Tabasco.configuration.portal
+    def initialize(...)
+      raise MissingHandleError, "A handle must be defined when using portals" if self.class.handle.nil?
 
-      message = <<~ERR
-        Portal not configured, you must provide a block that fetches the default portal
-        container using Tabasco.configure. Example:
+      super
+    end
 
-        Tabasco.configure do |config|
-          config.portal do
-            find("[data-my-portal-container]")
-          end
-        end
-      ERR
+    private
 
-      raise PortalNotConfigured, message
+    def container
+      @container ||= case Tabasco.configuration.portal(self.class.handle)
+      in { test_id: test_id }
+        Capybara.current_session.find("[data-testid='#{self.class.prepare_test_id(test_id)}']")
+      else
+        raise ArgumentError, "The portal #{self.class.handle.inspect} is not configured"
+      end
     end
   end
 
   class Container
-    def self.portal(name, klass = nil, &)
-      Portal.assert_portal_configured!
-
-      define_inline_section(name, klass, inline_superclass: Portal, &)
+    def self.portal(name, klass = nil, &block)
+      define_inline_section(name, klass, inline_superclass: Portal) do
+        handle name
+        class_eval(&block) if block
+      end
     end
   end
 end

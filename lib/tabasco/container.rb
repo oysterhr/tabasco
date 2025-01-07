@@ -93,6 +93,10 @@ module Tabasco
     end
     # rubocop: enable Metrics/MethodLength
 
+    def self.prepare_test_id(test_id)
+      test_id.to_s.tr("_", "-")
+    end
+
     # Automatically adds a private precondition method for any has_X? query method added.
     # If a method named `has_<something>?` is defined, we will create a corresponding
     # `has_<something>!` method.

@@ -17,7 +17,10 @@ RSpec.describe Tabasco::Page do
 
       ensure_loaded { has_content!("Welcome to the Testing Demo Page") }
 
-      section :welcome_header
+      section :welcome_header do
+        portal :another_portal
+      end
+
       section :top_menu
       section :about do
         section :first_article
@@ -31,12 +34,6 @@ RSpec.describe Tabasco::Page do
         ensure_loaded { has_content!("This string does not exist in the contact section") }
       end
     end
-  end
-
-  let(:portal_proc) { proc {} }
-
-  before do
-    allow(Tabasco.configuration).to receive(:portal).and_return(portal_proc)
   end
 
   describe "scoping capybara node methods" do
@@ -126,21 +123,33 @@ RSpec.describe Tabasco::Page do
     end
   end
 
-  describe "portal sections" do
-    it "returns a portal to a DOM element outside the parent section/page according to the configuration" do
-      allow(Tabasco.configuration)
-        .to receive(:portal)
-        .and_return(proc { find("[data-portal-container]") })
+  describe "portals" do
+    around do |example|
+      Tabasco.configure do |config|
+        config.portal(:my_portal)
+        config.portal(:another_portal, test_id: :another_portal_container)
+      end
 
-      expect(subject.about.my_portal).to be_a(Tabasco::Portal)
-      expect(subject.about.my_portal).to have_content("This is the portal")
+      example.call
+
+      Tabasco.reset_configuration!
     end
 
-    it "raises an error if the portal is not configured" do
-      allow(Tabasco.configuration).to receive(:portal).and_return(nil)
+    it "can target DOM elements outside the parent sections as long as properly configured" do
+      expect(subject.about.my_portal).to be_a(Tabasco::Portal)
+      expect(subject.about.my_portal).to have_content("This is the portal")
+      expect(subject.about.my_portal).to have_no_content("Another Portal Content")
+
+      expect(subject.welcome_header.another_portal).to be_a(Tabasco::Portal)
+      expect(subject.welcome_header.another_portal).to have_content("Another Portal Content")
+      expect(subject.welcome_header.another_portal).to have_no_content("This is the portal")
+    end
+
+    it "cannot be used when they're not configured globally" do
+      Tabasco.reset_configuration!
 
       expect { subject.about.my_portal }
-        .to raise_error(Tabasco::PortalNotConfigured)
+        .to raise_error(Tabasco::Configuration::PortalNotConfigured)
     end
   end
 end

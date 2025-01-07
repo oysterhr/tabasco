@@ -3,11 +3,10 @@
 require "capybara/dsl"
 require "capybara/rspec/matchers"
 require_relative "tabasco/version"
+require_relative "tabasco/error"
 require_relative "tabasco/configuration"
 
 module Tabasco
-  class Error < StandardError; end
-
   def self.configure
     yield configuration.dsl
   end

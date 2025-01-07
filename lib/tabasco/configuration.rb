@@ -2,10 +2,28 @@
 
 module Tabasco
   class Configuration
-    attr_reader :portal
+    class Error < ::Tabasco::Error; end
+    class PortalNotConfigured < Error; end
+
+    def initialize
+      @portals = {}
+    end
 
     def dsl
       @dsl ||= DSL.new(self)
+    end
+
+    def portal(name)
+      name = name.to_sym
+
+      return @portals[name] if @portals.key?(name)
+
+      message = <<~ERR
+        Portal #{name.inspect} is not configured. Use Tabasco.configure to declare the acceptable
+        portals. Refer to the README document for more information.
+      ERR
+
+      raise PortalNotConfigured, message
     end
 
     class DSL
@@ -14,20 +32,30 @@ module Tabasco
       def initialize(configuration)
         @configuration = configuration
       end
-      
-      # Define a proc that will be used to find the default portal element in the DOM.
-      # example:
+
+      # Declare portal elements your tests are allowed to use, with their related test_ids
+      # This is a global configuration as a way to centralize and make it difficult to abuse
+      # the usage of portals, since they ignore completely the automatic scoping of
+      # Capybara's finders that Tabasco provides.
       #
       # Tabasco.configure do |config|
-      #   config.portal do
-      #     find("[data-floating-ui-portal]")
-      #   end
-      # end
+      #   # will locate data-testid="toast_message" anywhere in the DOM
+      #   config.portal(:toast_message)
       #
-      # Right now we only support a single portal element, but we could easily extend this
-      # to support multiple named portals.
-      def portal(&block)
-        configuration.instance_variable_set(:@portal, block)
+      #   # As usual, the test_id can be overridden
+      #   config.portal(:datepicker, test_id: :react_datepicker)
+      # end
+      def portal(portal_name, test_id: nil)
+        portal_name = portal_name.to_sym
+        test_id ||= portal_name
+
+        portals = configuration.instance_variable_get(:@portals)
+
+        raise Error, "The portal #{portal_name.inspect} is already defined" if portals.key?(portal_name.to_sym)
+
+        portals[portal_name] = {test_id:}
+
+        nil
       end
     end
   end

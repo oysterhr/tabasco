@@ -4,14 +4,18 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Oyster Tabasco Portal testing page</title>
-    <link rel="stylesheet" href="styles.css"
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body data-testid="root-container">
-    <div data-portal-container>
+    <div data-testid="portal-container">
       <h1>This is the portal</h1>
       This is a portal element, that can be accessed from internal page objects
       or sections even though it's not a direct child of the section container.
       However, this needs to be configured using Tabasco.configure to work.
+    </div>
+
+    <div data-testid="datepicker-container">
+      This is a floating datepicker element.
     </div>
 
     <section data-testid="home">

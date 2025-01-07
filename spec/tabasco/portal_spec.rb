@@ -3,8 +3,13 @@
 RSpec.describe Tabasco::Portal do
   subject { portal_klass.load }
 
+  let(:handle) { :portal_container }
+
   let(:portal_klass) do
+    portal_handle = handle
+
     Class.new(described_class) do
+      handle portal_handle
       ensure_loaded { container }
     end
   end
@@ -13,29 +18,40 @@ RSpec.describe Tabasco::Portal do
     Capybara.current_session.visit "portal_test.html"
   end
 
-  context "when the default portal has not been configured" do
-    specify do
-      expect { subject }.to raise_error(Tabasco::PortalNotConfigured)
+  context "without a handle" do
+    let(:handle) { nil }
+
+    it "raises Tabasco::Portal::MissingHandleError" do
+      expect { subject }.to raise_error(Tabasco::Portal::MissingHandleError)
     end
   end
 
-  context "when the default portal has been configured and retrieves a container" do
-    around do |lorem|
+  context "when the given portal handle has been properly configured" do
+    around do |example|
       Tabasco.configure do |config|
-        config.portal do
-          find("[data-portal-container]")
-        end
+        config.portal(:portal_container)
+        config.portal(:datepicker, test_id: :datepicker_container)
       end
 
-      lorem.call
+      example.call
 
       Tabasco.reset_configuration!
     end
 
-    it "finds a portal using the configured portal block" do
+    it "finds the container anywhere in the DOM using the handle as test_id" do
       expect { subject }.not_to raise_error
 
-      expect(subject.container).to have_content("This is the portal")
+      expect(subject).to have_content("This is the portal")
+    end
+
+    context "with an explicit test_id" do
+      let(:handle) { :datepicker }
+
+      it "finds the container anywhere in the DOM using the explicit test_id" do
+        expect { subject }.not_to raise_error
+
+        expect(subject).to have_content("This is a floating datepicker element.")
+      end
     end
   end
 end

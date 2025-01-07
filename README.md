@@ -197,27 +197,28 @@ demo_page.main_content.tenant_id    # NoMethodError
 
 ### Portal sections
 
-Sometimes, you'll need to bypass the automatic scoping of sections, and define a nested section that targets a DOM element that is not a children of the parent section container.
+Sometimes you'll need to bypass the automatic scoping of sections, and define a nested section that targets a DOM element that is not a children of the parent section container.
 
-A common use case is for targeting the contents of floating elements, such as toast messages, datepickers, popover elements, that are often inserted right below the body element. For this, you can use portals. To do that, you must define a block that finds in the global page scope, your portal elements.
+A common use case is for targeting the contents of floating elements, such as toast messages, datepickers, popover elements, that are often inserted close to the root of the page DOM.
 
-Consider the following html fragment:
+For these cases, you can use portals. Consider the following html fragment:
 
 ```html
-<div data-portal-container>My portal content!</div>
+<div data-testid="toast-portal-container">This is a toast message!</div>
 
 <div data-testid="my_form">...</div>
 ```
 
-First, we configure how the portal element is retrieved:
+First, we give this portal a name and tell Tabasco how to find it:
 
 ```rb
 Tabasco.configure do |config|
-  config.portal { find("[data-portal-container]") }
+  # test_id is only necessary if it does not match the portal name
+  config.portal(:toast_message, test_id: :toast_portal_container)
 end
 ```
 
-You can then define a portal subsection like this:
+The `:toast_message` portal can now be used inside your sections:
 
 ```rb
 class MyForm < Tabasco::Section
@@ -229,14 +230,25 @@ class MyForm < Tabasco::Section
 end
 ```
 
-The portal will work as a subsection of MyForm, even though it's container is not a child of the form div:
+The portal will behave as a subsection of MyForm, even though it's container is not a child of the form div:
 
 ```rb
 my_form_section = MyForm.load
 expect(my_form_section.portal).to have_content("My portal content!")
+
+# Caveat: this won't work, as the DOM element is not copied or moved to the parent element!
+expect(my_form_section).to have_content("My portal content!")
 ```
 
-This is an experimental API. For now it only support a single portal element, and needs to be configured globally, which is a rather strong limitation (although intentional, as we don't want to encourage bypassing section scope). Feedback is welcome.
+You may define multiple types of portals as well, but we encourage you to use this with caution, given bypassing the natural scoping of sections defeats the purpose of using Tabasco and reduces the amount of guardrails we can offer you out of the box.
+
+```rb
+Tabasco.configure do |config|
+  config.portal(:toast_message, test_id: :portal_container)
+  config.portal(:datepicker, test_id: :react_datepicker)
+  config.portal(:popover, test_id: :my_popover_portal)
+end
+```
 
 ### Organizing your directory structure
 
