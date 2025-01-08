@@ -7,13 +7,13 @@ RSpec.describe Tabasco do
 
   describe ".configure" do
     it "yields the configuration dsl" do
-      expect { |b| Tabasco.configure(&b) }.to yield_with_args(Tabasco.configuration.dsl)
+      expect { |b| described_class.configure(&b) }.to yield_with_args(described_class.configuration.dsl)
     end
   end
 
   describe ".configuration" do
     it "returns the configuration" do
-      expect(Tabasco.configuration).to be_a(Tabasco::Configuration)
+      expect(described_class.configuration).to be_a(Tabasco::Configuration)
     end
   end
 end
