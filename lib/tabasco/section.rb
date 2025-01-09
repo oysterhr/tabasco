@@ -73,7 +73,7 @@ module Tabasco
           # Filter attributes to only include those defined in the explicit class
           filtered_attributes = inherited_attributes.slice(*klass.attributes)
 
-          instance = klass.load(**filtered_attributes)
+          instance = klass.load(_parent_scope: self, **filtered_attributes)
           instance_variable_set(:"@#{name}", instance)
         end
 
@@ -117,7 +117,9 @@ module Tabasco
       super
     end
 
-    def initialize(**kwargs)
+    def initialize(_parent_scope: nil, **kwargs)
+      @_parent_scope = _parent_scope
+
       self.class.attributes.each do |attr_name|
         instance_variable_set(:"@#{attr_name}", kwargs[attr_name])
       end
@@ -151,7 +153,7 @@ module Tabasco
         raise "Container not configured. Define a container with `container_test_id <test_id>` in #{self.class}."
       end
 
-      @container ||= Capybara.current_session.find("[data-testid='#{self.class.test_id}']")
+      @container ||= (@_parent_scope || Capybara.current_session).find("[data-testid='#{self.class.test_id}']")
     end
 
     # Allows this page object to be used as subject of `expect` blocks:

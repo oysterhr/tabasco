@@ -535,7 +535,7 @@ Lint/TripleQuotes:
   Enabled: true
 
 Lint/UnderscorePrefixedVariableName:
-  Enabled: true
+  Enabled: false
 
 Lint/UnifiedInteger:
   Enabled: true

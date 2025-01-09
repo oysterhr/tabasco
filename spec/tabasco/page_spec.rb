@@ -22,6 +22,10 @@ RSpec.describe Tabasco::Page do
       section :about do
         section :first_article
         section :second_article
+
+        # Wrong: this should fail if we try accessing it, because the welcome_header testid
+        # is not a child of the about section
+        section :welcome_header, test_id: :welcome_header
       end
       section :contact, contact_section_klass_value
       section :non_existing_section
@@ -105,7 +109,12 @@ RSpec.describe Tabasco::Page do
   it "raises Capybara::ElementNotFound when trying to interact with sections not rendered in the page" do
     # TODO: wrap with Tabasco:: custom error class and improve error message
     expect { subject.non_existing_section }
-      .to raise_error(Capybara::ElementNotFound, "Unable to find css \"[data-testid='non-existing-section']\"")
+      .to raise_error(Capybara::ElementNotFound, /Unable to find css "\[data-testid='non-existing-section'\]" within/)
+  end
+
+  it "raises Capybara::ElementNotFound when a subsection test_id is not child of the parent section" do
+    expect { subject.about.welcome_header }
+      .to raise_error(Capybara::ElementNotFound, /Unable to find css "\[data-testid='welcome-header'\]" within/)
   end
 
   context "when the ensure_loaded block for a section fails" do
