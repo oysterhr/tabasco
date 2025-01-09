@@ -146,9 +146,9 @@ module Tabasco
     # And narrows any node dom finding operations to the container wrapper
     (Capybara::Session::NODE_METHODS + [:within]).each do |method|
       class_eval <<~METHOD, __FILE__, __LINE__ + 1
-        def #{method}(...)                           # def find(...)
-          wrapping { Capybara.current_session.#{method}(...) }      #  wrapping { Capybara.current_session.find(...) }
-        end                                          # end
+        def #{method}(...)                                       # def find(...)
+          wrapping { Capybara.current_session.#{method}(...) }   #  wrapping { Capybara.current_session.find(...) }
+        end                                                      # end
       METHOD
     end
 
