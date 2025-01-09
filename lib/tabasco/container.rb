@@ -177,7 +177,8 @@ module Tabasco
     end
 
     # Allows section objects to be used as arguments of Capybara::Session#within
-    alias_method :to_capybara_node, :container
+    # Can't use aliases, since we need container to resolve on subclasses
+    def to_capybara_node = container
 
     private
 
