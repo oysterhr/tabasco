@@ -9,4 +9,3 @@ require_relative "tabasco/page"
 module Tabasco
   class Error < StandardError; end
 end
-

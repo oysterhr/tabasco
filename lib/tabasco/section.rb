@@ -2,9 +2,6 @@
 
 module Tabasco
   PreconditionNotMetError = Class.new(StandardError)
-  class CapybaraAPI
-    include Capybara::DSL
-  end
 
   class Section
     include Capybara::RSpecMatchers
@@ -44,8 +41,6 @@ module Tabasco
     def self.section(name, klass = nil, test_id: nil, &block)
       test_id = (test_id || name).to_s.tr("_", "-")
 
-      parent_name = self.name
-      section_name = name.to_s.capitalize
       parent_attributes = attributes
 
       klass ||= Class.new(Section) do
@@ -57,33 +52,13 @@ module Tabasco
 
         def self.attribute(*)
           raise ArgumentError, "Attributes cannot be defined in anonymous sections. " \
-                                "They inherit all arguments from parent pages/sections automatically."
+                               "They inherit all arguments from parent pages/sections automatically."
         end
 
         # Simple and naive implementation for Anonymous classes
         # Will raise a Capybara error if the container cannot be found
         # Can be overridden in the inline block anyway
         ensure_loaded { container }
-
-        class_eval <<~METHOD, __FILE__, __LINE__ + 1
-          class << self
-            def name
-              "#{parent_name}|#{section_name}"
-            end
-
-            def inspect
-              "Section(\#{name})"
-            end
-
-            alias_method :to_s, :inspect
-          end
-
-          def inspect
-            "#<\#{self.class.inspect}:\#{object_id}>"
-          end
-
-          alias_method :to_s, :inspect
-        METHOD
 
         class_eval(&block) if block
       end
