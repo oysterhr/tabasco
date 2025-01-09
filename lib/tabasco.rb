@@ -7,6 +7,7 @@ require_relative "tabasco/version"
 
 module Tabasco
   class Error < StandardError; end
+  class PreconditionNotMetError < Error; end
 end
 
 require_relative "tabasco/page"

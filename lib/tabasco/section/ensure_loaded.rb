@@ -20,12 +20,12 @@ module Tabasco
       # Instance method to call the stored block
       def ensure_loaded
         unless self.class.ensure_loaded_block
-          raise "Subclasses of Tabasco::Section must define how to check whether your " \
+          raise "Page and section objects must define how to check whether their " \
                 "content has loaded with the ensure_loaded { ... } DSL method."
 
         end
 
-        instance_exec(&self.class.ensure_loaded_block)
+        raise PreconditionNotMetError unless instance_exec(&self.class.ensure_loaded_block)
       end
     end
   end
