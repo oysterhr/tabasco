@@ -3,7 +3,7 @@
 require_relative "section/ensure_loaded"
 
 module Tabasco
-  PreconditionNotMetError = Class.new(StandardError)
+  class PreconditionNotMetError < Error; end
 
   class Section
     include Capybara::RSpecMatchers
