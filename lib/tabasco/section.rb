@@ -1,10 +1,13 @@
 # frozen_string_literal: true
 
+require_relative "section/ensure_loaded"
+
 module Tabasco
   PreconditionNotMetError = Class.new(StandardError)
 
   class Section
     include Capybara::RSpecMatchers
+    include EnsureLoaded
 
     private_class_method :new # Use .load instead (or .visit for Page objects)
 
@@ -27,14 +30,6 @@ module Tabasco
 
     def self.test_id
       @test_id
-    end
-
-    def self.ensure_loaded(&block)
-      @ensure_loaded_block = block
-    end
-
-    def self.ensure_loaded_block
-      @ensure_loaded_block
     end
 
     # rubocop: disable Metrics/MethodLength
@@ -135,17 +130,6 @@ module Tabasco
       return if missing_attributes.empty?
 
       raise ArgumentError, "Missing attribute(s) passed to #{self.class}: #{missing_attributes}"
-    end
-
-    # Instance method to call the stored block
-    def ensure_loaded
-      unless self.class.ensure_loaded_block
-        raise "Subclasses of Tabasco::Section must define how to check whether your " \
-              "content has loaded with the ensure_loaded { ... } DSL method."
-
-      end
-
-      instance_exec(&self.class.ensure_loaded_block)
     end
 
     def container
