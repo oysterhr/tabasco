@@ -43,7 +43,7 @@ RSpec.describe Tabasco::Configuration do
     it "raises an error when trying to read a portal that has not been defined" do
       expect do
         configuration.portal(:my_portal)
-      end.to raise_error(Tabasco::Configuration::PortalNotConfigured)
+      end.to raise_error(Tabasco::PortalNotConfiguredError)
     end
 
     it "raises an error when trying to define a portal with the same name twice" do
@@ -51,7 +51,7 @@ RSpec.describe Tabasco::Configuration do
 
       expect do
         dsl.portal(:my_portal)
-      end.to raise_error(Tabasco::Configuration::Error, "The portal :my_portal is already defined")
+      end.to raise_error(Tabasco::PortalAlreadyConfiguredError, "The portal :my_portal is already defined")
     end
   end
 end

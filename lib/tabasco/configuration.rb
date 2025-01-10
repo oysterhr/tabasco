@@ -2,9 +2,6 @@
 
 module Tabasco
   class Configuration
-    class Error < ::Tabasco::Error; end
-    class PortalNotConfigured < Error; end
-
     def initialize
       @portals = {}
     end
@@ -23,7 +20,7 @@ module Tabasco
         portals. Refer to the README document for more information.
       ERR
 
-      raise PortalNotConfigured, message
+      raise PortalNotConfiguredError, message
     end
 
     class DSL
@@ -54,7 +51,10 @@ module Tabasco
 
         portals = configuration.instance_variable_get(:@portals)
 
-        raise Error, "The portal #{portal_name.inspect} is already defined" if portals.key?(portal_name.to_sym)
+        if portals.key?(portal_name.to_sym)
+          raise PortalAlreadyConfiguredError,
+            "The portal #{portal_name.inspect} is already defined"
+        end
 
         portals[portal_name] = {klass:, test_id:}
 

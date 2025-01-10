@@ -33,9 +33,16 @@ module Tabasco
         define_inline_section(name, klass, test_id: test_id, &)
       end
 
-      def portal(name, local_concrete_klass = nil, &)
+      def portal(name, concrete_klass = nil, local_concrete_klass = nil, &)
         Tabasco.configuration.portal(name) in { klass:, test_id: }
 
+        if klass && concrete_klass && !concrete_klass.ancestors.include?(klass)
+          raise InconsistentPortalKlassError,
+            "The class #{concrete_klass} provided to the portal \"#{name}\" " \
+            "must inherit from the configured portal class #{klass}."
+        end
+
+        klass = concrete_klass || klass
         define_inline_section(name, klass, test_id:, portal: true, &)
       end
 

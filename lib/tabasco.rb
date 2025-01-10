@@ -9,6 +9,9 @@ require_relative "tabasco/version"
 module Tabasco
   class Error < StandardError; end
   class PreconditionNotMetError < Error; end
+  class InconsistentPortalKlassError < Error; end
+  class PortalNotConfiguredError < Error; end
+  class PortalAlreadyConfiguredError < Error; end
 
   def self.configure
     yield configuration.dsl

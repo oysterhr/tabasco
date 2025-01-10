@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe Tabasco::Section do
-  def def_klass(container_test_id: :section_container, &block)
-    Class.new(described_class) do
+  def def_klass(parent: described_class, container_test_id: :section_container, &block)
+    Class.new(parent) do
       container_test_id container_test_id
 
       ensure_loaded { true }
@@ -199,7 +199,7 @@ RSpec.describe Tabasco::Section do
     end
 
     it "raises an error if the portal has not been configured" do
-      expect { section_klass.load.ipsum.lorem }.to raise_error(Tabasco::Configuration::PortalNotConfigured)
+      expect { section_klass.load.ipsum.lorem }.to raise_error(Tabasco::PortalNotConfiguredError)
     end
 
     context "when the portal is configured" do
@@ -288,6 +288,34 @@ RSpec.describe Tabasco::Section do
         expect(section.another_portal.hello).to eq("Hello from a different dimension!")
 
         expect(section.portal).not_to be(section.another_portal)
+      end
+
+      it "can be assigned a different concrete class as long as it's a subclass of the configured one" do
+        another_concrete_klass = def_klass(parent: concrete_klass, container_test_id: nil) do
+          def hello
+            "Hello from the multiverse!"
+          end
+        end
+
+        section_klass = def_klass do
+          portal :portal, another_concrete_klass
+        end
+
+        expect(section_klass.load.portal.hello).to eq("Hello from the multiverse!")
+      end
+
+      it "raises an error if the provided concrete class is not a subclass of the configured one" do
+        another_concrete_klass = def_klass(container_test_id: nil) do
+          def hello
+            "Hello from the multiverse!"
+          end
+        end
+
+        expect do
+          def_klass do
+            portal :portal, another_concrete_klass
+          end
+        end.to raise_error(Tabasco::InconsistentPortalKlassError)
       end
     end
   end
