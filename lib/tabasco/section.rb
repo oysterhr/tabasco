@@ -1,10 +1,11 @@
 # frozen_string_literal: true
 
-module Tabasco
-  PreconditionNotMetError = Class.new(StandardError)
+require_relative "section/ensure_loaded"
 
+module Tabasco
   class Section
     include Capybara::RSpecMatchers
+    include EnsureLoaded
 
     private_class_method :new # Use .load instead (or .visit for Page objects)
 
@@ -27,14 +28,6 @@ module Tabasco
 
     def self.test_id
       @test_id
-    end
-
-    def self.ensure_loaded(&block)
-      @ensure_loaded_block = block
-    end
-
-    def self.ensure_loaded_block
-      @ensure_loaded_block
     end
 
     # rubocop: disable Metrics/MethodLength
@@ -137,17 +130,6 @@ module Tabasco
       raise ArgumentError, "Missing attribute(s) passed to #{self.class}: #{missing_attributes}"
     end
 
-    # Instance method to call the stored block
-    def ensure_loaded
-      unless self.class.ensure_loaded_block
-        raise "Subclasses of Tabasco::Section must define how to check whether your " \
-              "content has loaded with the ensure_loaded { ... } DSL method."
-
-      end
-
-      instance_exec(&self.class.ensure_loaded_block)
-    end
-
     def container
       unless self.class.test_id
         raise "Container not configured. Define a container with `container_test_id <test_id>` in #{self.class}."
@@ -162,14 +144,15 @@ module Tabasco
     # And narrows any node dom finding operations to the container wrapper
     (Capybara::Session::NODE_METHODS + [:within]).each do |method|
       class_eval <<~METHOD, __FILE__, __LINE__ + 1
-        def #{method}(...)                           # def find(...)
-          wrapping { Capybara.current_session.#{method}(...) }      #  wrapping { Capybara.current_session.find(...) }
-        end                                          # end
+        def #{method}(...)                                       # def find(...)
+          wrapping { Capybara.current_session.#{method}(...) }   #  wrapping { Capybara.current_session.find(...) }
+        end                                                      # end
       METHOD
     end
 
     # Allows section objects to be used as arguments of Capybara::Session#within
-    alias_method :to_capybara_node, :container
+    # Can't use alias since we need container to resolve in subclasses (for test mostly)
+    def to_capybara_node = container
 
     private
 
