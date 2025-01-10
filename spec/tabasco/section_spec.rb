@@ -40,6 +40,27 @@ RSpec.describe Tabasco::Section do
     expect(block_called).to be true
   end
 
+  describe "#_handle" do
+    it "can be omitted" do
+      section = section_klass.load(user: "John", customer_id: 123)
+
+      expect(section._handle).to be_nil
+    end
+
+    it "can be passed when loading the section" do
+      section = section_klass.load("test-handle", user: "John", customer_id: 123)
+
+      expect(section._handle).to eq("test-handle")
+    end
+
+    it "is set on subclasses" do
+      section = section_klass.load(user: "John", customer_id: 123)
+
+      expect(section.lorem._handle).to eq(:lorem)
+      expect(section.ipsum._handle).to eq(:ipsum)
+    end
+  end
+
   describe "attributes DSL" do
     it "allows instances of the section to receive attributes" do
       section = section_klass.load(user: "John", customer_id: 123)
