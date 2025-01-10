@@ -2,6 +2,7 @@
 
 RSpec.describe Tabasco::Section do
   let(:section_klass) do
+    ipsum_klass_local = ipsum_klass
     Class.new(described_class) do
       container_test_id :section_container
 
@@ -10,10 +11,25 @@ RSpec.describe Tabasco::Section do
       attribute :user
       attribute :customer_id
 
-      section :lorem
-      section :ipsum do
+      section :lorem do
+        section :amet_consectuter
+      end
+
+      section :ipsum, ipsum_klass_local do
         section :dolor
       end
+
+      section :other_ipsum, ipsum_klass_local do
+        section :other_dolor
+      end
+    end
+  end
+
+  let(:ipsum_klass) do
+    Class.new(described_class) do
+      ensure_loaded { true }
+
+      attribute :user
     end
   end
 
@@ -25,7 +41,8 @@ RSpec.describe Tabasco::Section do
     section = section_klass.load(user: "John", customer_id: 123)
 
     expect(section.lorem).to be_a(described_class)
-    expect(section.ipsum.dolor).to be_a(described_class)
+    expect(section.lorem.amet_consectuter).to be_a(described_class)
+    expect(section.ipsum).to be_a(described_class)
   end
 
   it "yields the section instance itself if provided with a block" do
@@ -38,6 +55,26 @@ RSpec.describe Tabasco::Section do
     end
 
     expect(block_called).to be true
+  end
+
+  describe "concrete classes" do
+    it "can be specified for subsections" do
+      section = section_klass.load(user: "John", customer_id: 123)
+
+      expect(section.ipsum).to be_a(ipsum_klass)
+    end
+
+    it "can be extended with inline blocks, keeping the concrete class unchanged" do
+      section = section_klass.load(user: "John", customer_id: 123)
+
+      expect(section.ipsum.dolor).to be_a(described_class)
+      expect(section.ipsum.class).not_to be(ipsum_klass)
+      expect(section.ipsum).not_to respond_to(:other_dolor)
+
+      expect(section.other_ipsum.other_dolor).to be_a(described_class)
+      expect(section.other_ipsum.class).not_to be(ipsum_klass)
+      expect(section.other_ipsum).not_to respond_to(:dolor)
+    end
   end
 
   describe "#_handle" do
@@ -90,7 +127,8 @@ RSpec.describe Tabasco::Section do
       section = section_klass.load(user: "John", customer_id: 123)
 
       expect(section.lorem.user).to eq(section.user)
-      expect(section.ipsum.dolor.customer_id).to eq(section.customer_id)
+      expect(section.lorem.amet_consectuter.user).to eq(section.user)
+      expect(section.lorem.amet_consectuter.customer_id).to eq(section.customer_id)
     end
 
     it "does not allow anonymous sections to declare arguments" do
@@ -109,34 +147,13 @@ RSpec.describe Tabasco::Section do
     end
 
     it "only passes attributes to explicit classes if they define that attribute" do
-      subclass = Class.new(Tabasco::Section) do
-        container_test_id :lorem
-        ensure_loaded { true }
+      section = section_klass.load(user: "John", customer_id: "Acme")
 
-        attribute :user
-      end
+      expect(section.lorem.user).to eq("John")
+      expect(section.lorem.customer_id).to eq("Acme")
 
-      section_klass = Class.new(described_class) do
-        container_test_id :section_container
-        ensure_loaded { true }
-
-        attribute :user
-        attribute :customer
-
-        section :subsection, subclass
-
-        section :anonymous_subsection, test_id: :ipsum do
-          ensure_loaded { true }
-        end
-      end
-
-      section = section_klass.load(user: "John", customer: "Acme")
-
-      expect(section.anonymous_subsection.user).to eq("John")
-      expect(section.anonymous_subsection.customer).to eq("Acme")
-
-      expect(section.subsection.user).to eq("John")
-      expect { section.subsection.customer }.to raise_error(NoMethodError)
+      expect(section.ipsum.user).to eq("John")
+      expect { section.ipsum.customer_id }.to raise_error(NoMethodError)
     end
   end
 
