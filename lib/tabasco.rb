@@ -11,4 +11,5 @@ module Tabasco
   class PreconditionNotMetError < Error; end
 end
 
+require_relative "tabasco/configuration"
 require_relative "tabasco/page"
