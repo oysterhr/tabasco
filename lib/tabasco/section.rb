@@ -66,7 +66,7 @@ module Tabasco
           # Filter attributes to only include those defined in the explicit class
           filtered_attributes = inherited_attributes.slice(*klass.attributes)
 
-          instance = klass.load(_parent_scope: self, **filtered_attributes)
+          instance = klass.load(name, _parent_scope: self, **filtered_attributes)
           instance_variable_set(:"@#{name}", instance)
         end
 
@@ -110,7 +110,10 @@ module Tabasco
       super
     end
 
-    def initialize(_parent_scope: nil, **kwargs)
+    attr_reader :_handle
+
+    def initialize(_handle = nil, _parent_scope: nil, **kwargs)
+      @_handle = _handle
       @_parent_scope = _parent_scope
 
       self.class.attributes.each do |attr_name|
