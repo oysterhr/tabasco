@@ -1,13 +1,19 @@
 # frozen_string_literal: true
 
 RSpec.describe Tabasco::Section do
-  let(:section_klass) do
-    ipsum_klass_local = ipsum_klass
+  def def_klass(container_test_id: :section_container, &block)
     Class.new(described_class) do
-      container_test_id :section_container
+      container_test_id container_test_id
 
       ensure_loaded { true }
 
+      class_eval(&block)
+    end
+  end
+
+  let(:section_klass) do
+    ipsum_klass_local = ipsum_klass
+    def_klass do
       attribute :user
       attribute :customer_id
 
@@ -26,15 +32,15 @@ RSpec.describe Tabasco::Section do
   end
 
   let(:ipsum_klass) do
-    Class.new(described_class) do
-      ensure_loaded { true }
-
-      attribute :user
-    end
+    def_klass(container_test_id: nil) { attribute :user }
   end
 
   before do
     Capybara.current_session.visit("section_spec.html")
+  end
+
+  after do
+    Tabasco.reset_configuration!
   end
 
   it "can access sections with dot notation" do
@@ -133,7 +139,7 @@ RSpec.describe Tabasco::Section do
 
     it "does not allow anonymous sections to declare arguments" do
       expect do
-        Class.new(described_class) do
+        def_klass(container_test_id: nil) do
           attribute :user
 
           section :anonymous_section do
@@ -179,6 +185,110 @@ RSpec.describe Tabasco::Section do
       end
 
       expect(section.private_methods).to include(:has_custom_query!)
+    end
+  end
+
+  describe "portals" do
+    let(:section_klass) do
+      def_klass do
+        section :ipsum do
+          section :not_portal, test_id: :portal
+          portal :portal
+        end
+      end
+    end
+
+    it "raises an error if the portal has not been configured" do
+      expect { section_klass.load.ipsum.lorem }.to raise_error(Tabasco::Configuration::PortalNotConfigured)
+    end
+
+    context "when the portal is configured" do
+      before do
+        Tabasco.configure do |config|
+          config.portal(:portal)
+        end
+      end
+
+      it "allows the section to access the portal" do
+        section = section_klass.load.ipsum
+
+        expect(section.portal).to be_a(described_class)
+        expect(section.portal).to have_content("I'm a portal element")
+
+        expect(section).to have_no_content("I'm a portal element")
+        expect { section.not_portal }.to raise_error(/Unable to find css "\[data-testid='portal'\]" within/)
+      end
+    end
+
+    context "when the portal is configured with a different test_id" do
+      before do
+        Tabasco.configure do |config|
+          config.portal(:portal, test_id: :another_portal)
+        end
+      end
+
+      it "allows the section to access the portal" do
+        section = section_klass.load.ipsum
+
+        expect(section.portal).to be_a(described_class)
+        expect(section.portal).to have_content("I'm a different portal element")
+
+        expect(section).to have_no_content("I'm a different portal element")
+        expect { section.not_portal }.to raise_error(/Unable to find css "\[data-testid='portal'\]" within/)
+      end
+    end
+
+    context "when the portal is configured with a concrete class" do
+      before do
+        Tabasco.configure do |config|
+          config.portal(:portal, concrete_klass)
+          config.portal(:another_portal, concrete_klass)
+        end
+      end
+
+      let(:section_klass) do
+        def_klass do
+          section :ipsum do
+            portal :portal
+            portal :another_portal do
+              def hello
+                "Hello from a different dimension!"
+              end
+            end
+          end
+        end
+      end
+
+      let(:concrete_klass) do
+        def_klass(container_test_id: nil) do
+          def hello
+            "hello"
+          end
+        end
+      end
+
+      it "exposes the portal as a subclass of it" do
+        section = section_klass.load.ipsum
+
+        expect(section.portal).to be_a(concrete_klass)
+        expect(section.portal).to have_content("I'm a portal element")
+        expect(section.portal.class).not_to be(concrete_klass)
+        expect(section.portal.hello).to eq("hello")
+
+        expect(section).to have_no_content("I'm a portal element")
+      end
+
+      it "can be extended with inline blocks, keeping the concrete class unchanged" do
+        section = section_klass.load.ipsum
+
+        expect(section.portal).to be_a(described_class)
+        expect(section.portal.hello).to eq("hello")
+
+        expect(section.another_portal).to be_a(described_class)
+        expect(section.another_portal.hello).to eq("Hello from a different dimension!")
+
+        expect(section.portal).not_to be(section.another_portal)
+      end
     end
   end
 end

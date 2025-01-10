@@ -33,7 +33,17 @@ module Tabasco
 
     # rubocop: disable Metrics/MethodLength
     # rubocop: disable Metrics/PerceivedComplexity
-    def self.section(name, klass = nil, test_id: nil, &block)
+    def self.section(name, klass = nil, test_id: nil, &)
+      define_inline_section(name, klass, test_id: test_id, &)
+    end
+
+    def self.portal(name, local_concrete_klass = nil, &)
+      Tabasco.configuration.portal(name) in { klass:, test_id: }
+
+      define_inline_section(name, klass, test_id:, portal: true, &)
+    end
+
+    def self.define_inline_section(name, klass = nil, test_id: nil, portal: false, &block)
       test_id = (test_id || name).to_s.tr("_", "-")
 
       parent_attributes = attributes
@@ -76,7 +86,7 @@ module Tabasco
           # Filter attributes to only include those defined in the explicit class
           filtered_attributes = inherited_attributes.slice(*klass.attributes)
 
-          instance = klass.load(name, _parent_scope: self, **filtered_attributes)
+          instance = klass.load(name, _parent_scope: portal ? nil : self, **filtered_attributes)
           instance_variable_set(:"@#{name}", instance)
         end
 

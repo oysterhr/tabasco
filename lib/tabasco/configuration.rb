@@ -14,7 +14,7 @@ module Tabasco
     end
 
     def portal(name)
-      name = name.to_sym
+      name = name&.to_sym
 
       return @portals[name] if @portals.key?(name)
 
