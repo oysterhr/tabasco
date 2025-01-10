@@ -25,7 +25,9 @@ module Tabasco
 
         end
 
-        raise PreconditionNotMetError unless instance_exec(&self.class.ensure_loaded_block)
+        return if instance_exec(&self.class.ensure_loaded_block) && container
+
+        raise PreconditionNotMetError
       end
     end
   end

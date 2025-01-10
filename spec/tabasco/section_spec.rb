@@ -3,26 +3,22 @@
 RSpec.describe Tabasco::Section do
   let(:section_klass) do
     Class.new(described_class) do
-      container_test_id "root"
+      container_test_id :section_container
+
+      ensure_loaded { true }
 
       attribute :user
       attribute :customer_id
 
-      # Override so we can do unit tests without any DOM dependency
-      ensure_loaded { true }
-
-      section :lorem do
-        ensure_loaded { true }
-      end
-
+      section :lorem
       section :ipsum do
-        ensure_loaded { true }
-
-        section :dolor do
-          ensure_loaded { true }
-        end
+        section :dolor
       end
     end
+  end
+
+  before do
+    Capybara.current_session.visit("section_spec.html")
   end
 
   it "can access sections with dot notation" do
@@ -93,20 +89,22 @@ RSpec.describe Tabasco::Section do
 
     it "only passes attributes to explicit classes if they define that attribute" do
       subclass = Class.new(Tabasco::Section) do
+        container_test_id :lorem
         ensure_loaded { true }
 
         attribute :user
-        section :subsub
       end
 
       section_klass = Class.new(described_class) do
+        container_test_id :section_container
         ensure_loaded { true }
 
         attribute :user
         attribute :customer
 
         section :subsection, subclass
-        section :anonymous_subsection do
+
+        section :anonymous_subsection, test_id: :ipsum do
           ensure_loaded { true }
         end
       end

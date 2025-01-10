@@ -370,6 +370,9 @@ RSpec/StubbedMock:
 RSpec/SubjectDeclaration:
   Enabled: true
 
+RSpec/VerifiedDoubles:
+  Enabled: false
+
 Security/IoMethods:
   Enabled: true
 
