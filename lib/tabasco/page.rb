@@ -12,6 +12,12 @@ module Tabasco
       @url_value
     end
 
+    def container
+      return super if self.class.test_id
+
+      Capybara.current_session.find("body")
+    end
+
     def self.visit(...)
       new(...).tap do |instance|
         Capybara.current_session.visit(instance.path)

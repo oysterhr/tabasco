@@ -13,7 +13,6 @@ RSpec.describe Tabasco::Page do
 
     Class.new(described_class) do
       url page_url_value
-      container_test_id :root_container
 
       ensure_loaded { has_content!("Welcome to the Testing Demo Page") }
 
@@ -96,13 +95,39 @@ RSpec.describe Tabasco::Page do
   end
   # rubocop: enable RSpec/ExpectInLet
 
-  context "when the page fails to load properly" do
-    let(:page_url) { "oops_not_found.html" }
+  context "when a container test id is specified for a page" do
+    let(:root_container) { :"root-container" }
 
-    it "raises an expectation error when trying to use the page object" do
-      # TODO: wrap with Tabasco:: custom error class and improve error message
-      expect { subject }
-        .to raise_error(Capybara::ElementNotFound, "Unable to find css \"[data-testid='root-container']\"")
+    before do
+      root_container_test_id = root_container
+
+      page_klass.class_eval do
+        container_test_id root_container_test_id
+      end
+    end
+
+    it "loads the page correctly" do
+      expect { subject }.not_to raise_error
+      expect(subject).to have_content("Welcome to the Testing Demo Page")
+    end
+
+    context "when the page fails to render" do
+      let(:page_url) { "oops_not_found.html" }
+
+      it "raises an expectation error when trying to use the page object" do
+        # TODO: wrap with Tabasco:: custom error class and improve error message
+        expect { subject }
+          .to raise_error(Capybara::ElementNotFound, "Unable to find css \"[data-testid='root-container']\"")
+      end
+    end
+
+    context "when a narrower testid is provided" do
+      let(:root_container) { :welcome_header }
+
+      it "scopes the page object to the given test id" do
+        expect(subject).to have_content("Welcome to the Testing Demo Page")
+        expect(subject).to have_no_content("Home Section")
+      end
     end
   end
 
