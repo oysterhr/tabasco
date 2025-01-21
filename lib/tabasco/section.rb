@@ -22,8 +22,7 @@ module Tabasco
 
     # class_attribute does not play nicely with a mutable array as default value
     def self.attributes
-      self._attributes = [] unless _attributes
-      _attributes
+      self._attributes ||= []
     end
 
     class_attribute :test_id
