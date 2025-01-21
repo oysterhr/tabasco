@@ -20,7 +20,15 @@ module Tabasco
         attr_reader attributes.last
       end
 
-      # class_attribute does not play nicely with a mutable array as default value
+      # We use class_attribute to ensure subclasses inherit their parent's configurations.
+      # However, we cannot use class_attribute's `default:` option to initialize an empty
+      # array because it gets evaluated once, causing the same underlying array to be shared
+      # across all classes.
+      #
+      # Additionally, the way class_attribute works does not allow us to override a getter
+      # and call `super`.
+      # Therefore, we named the class_attribute as :_attributes and explicitly defined the
+      # `attributes` getter with the necessary initialization logic.
       def attributes
         self._attributes ||= []
       end
