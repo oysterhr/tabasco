@@ -45,21 +45,23 @@ module Tabasco
       #   # And you can provide concrete subclass of Tabasco::Section class
       #   config.portal(:datepicker, MyDatepicker)
       # end
-      def portal(portal_name, klass = nil, test_id: nil)
-        portal_name = portal_name.to_sym
-        test_id ||= portal_name
+      def portal(name, klass = nil, test_id: nil)
+        name = name.to_sym
+        test_id ||= name
 
-        portals = configuration.instance_variable_get(:@portals)
-
-        if portals.key?(portal_name.to_sym)
+        if portals.key?(name)
           raise PortalAlreadyConfiguredError,
-            "The portal #{portal_name.inspect} is already defined"
+            "The portal #{name.inspect} is already defined"
         end
 
-        portals[portal_name] = {klass:, test_id:}
+        portals[name] = {klass:, test_id:}
 
         nil
       end
+
+      private
+
+      def portals = configuration.instance_variable_get(:@portals)
     end
   end
 end
