@@ -9,17 +9,27 @@ Additional notes:
 
 DEPENDENCIES
 
+activesupport: MIT
 addressable: Apache-2.0
 ast: MIT
+base64: Ruby
+benchmark: Ruby
+bigdecimal: Ruby
 bundler: MIT
 capybara: MIT
 coderay: MIT
+concurrent-ruby: MIT
+connection_pool: MIT
 diff-lcs: MIT
+drb: Ruby
+i18n: MIT
 json: Ruby
 language_server-protocol: MIT
+logger: Ruby
 matrix: Ruby
 method_source: MIT
 mini_mime: MIT
+minitest: MIT
 nokogiri: MIT
 parallel: MIT
 parser: MIT
@@ -42,7 +52,10 @@ rubocop-performance: MIT
 rubocop-rspec: MIT
 rubocop: MIT
 ruby-progressbar: MIT
+securerandom: Ruby
 tabasco: MIT
+tzinfo: MIT
 unicode-display_width: MIT
 unicode-emoji: MIT
+uri: Ruby
 xpath: MIT

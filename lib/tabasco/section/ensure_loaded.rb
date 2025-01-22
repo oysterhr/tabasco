@@ -4,16 +4,13 @@ module Tabasco
   class Section
     module EnsureLoaded
       def self.included(base)
+        base.class_eval { class_attribute(:ensure_loaded_block) }
         base.extend(ClassMethods)
       end
 
       module ClassMethods
         def ensure_loaded(&block)
-          @ensure_loaded_block = block
-        end
-
-        def ensure_loaded_block
-          @ensure_loaded_block
+          self.ensure_loaded_block = block
         end
       end
 

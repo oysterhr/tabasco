@@ -195,6 +195,151 @@ demo_page.tenant_id                 # ok
 demo_page.main_content.tenant_id    # NoMethodError
 ```
 
+### Portal sections
+
+Portals in Tabasco are designed to handle elements that are not nested within the parent section container’s DOM hierarchy. Common use cases include modal dialogs or other floating ui elements (popovers, tooltips, ...). This allows Tabasco to seamlessly interact with such elements while maintaining a structured and predictable test framework.
+
+Portals bypass the natural scoping of sections, targeting elements that are often inserted at the root of the page DOM. This guide will walk you through configuring portals, using them effectively, and extending their behavior.
+
+#### Defining a Portal
+
+Consider the following html fragment:
+
+```html
+<div data-testid="toast-portal-container">This is a toast message!</div>
+
+<div data-testid="my_form">...</div>
+```
+
+To interact with the toast message, we first define a portal in Tabasco:
+
+```rb
+Tabasco.configure do |config|
+  # test_id is only necessary if it does not match the portal name
+  config.portal(:toast_message, test_id: :toast_portal_container)
+end
+```
+
+Here, the :toast_message portal is linked to the data-testid="toast-portal-container" element.
+
+#### Using Portals in Sections
+
+You can use the defined portal inside a section. For example:
+
+```rb
+class MyForm < Tabasco::Section
+  # ...
+
+  portal :my_portal
+end
+```
+
+Even though the portal’s container is not a child of the form, it will behave as a subsection of MyForm:
+
+```rb
+my_form_section = MyForm.load
+expect(my_form_section.toast_message).to have_content("This is a toast message!")
+
+# ⚠ Caveat: This won't work, as the DOM element is not part of the form's container!
+expect(my_form_section).to have_content("This is a toast message!")
+```
+
+Note: Interact directly with the portal, as its content is not copied or moved to the parent container.
+
+#### Extending Portal Behavior
+
+Portals are similar to sections and can be extended using a block:
+
+```rb
+class MyForm < Tabasco::Section
+  # ...
+
+  portal :toast_message do
+    def dismiss
+      click_button "Dismiss"
+    end
+  end
+end
+
+my_form_section.toast_message.dismiss
+```
+
+#### Managing Multiple Portals
+
+You can define multiple portals in your global configuration, but use this feature sparingly to maintain structure and ensure readability:
+
+```rb
+Tabasco.configure do |config|
+  config.portal(:toast_message, test_id: :toast_portal_container)
+  config.portal(:datepicker, test_id: :react_datepicker)
+end
+```
+
+⚠ Warning: portals can bypass Tabasco’s natural scoping, reducing the guardrails that prevent test brittleness. Use them judiciously.
+
+#### Using concrete classes on Portals
+
+Portals can reuse behavior through concrete classes, just like sections. Imagine you have a general-purpose modal dialog with a close button. Define its behavior in a class:
+
+```rb
+class ModalDialog < Tabasco::Section
+  # ...
+  def dismiss
+    click_button "Close"
+  end
+end
+```
+
+You can tie this class to all instances of a portal globally:
+
+```rb
+Tabasco.configure do |config|
+  config.portal(:modal_dialog, ModalDialog, test_id: :modal_container)
+end
+```
+
+Alternatively, specify a class on a case-by-case basis:
+
+```rb
+class MyForm < Tabasco::Section
+  # ...
+  portal :modal_dialog, ModalDialog
+end
+```
+
+#### Inline Block Specialization
+
+You can further specialize individual portal instances by using an inline block:
+
+```rb
+class MyForm < Tabasco::Section
+  portal :modal_dialog, ModalDialog do
+    def confirm
+      click_button "Confirm"
+    end
+  end
+end
+
+# Only this instance of `modal_dialog` has the `confirm` method
+my_form_section.modal_dialog.confirm
+```
+
+Note: If you provide a concrete class globally and in a section, the section-specific class must inherit from the global one.
+
+#### Caveat: portals do not move or copy DOM elements around
+
+The following won't work:
+
+```rb
+expect(my_section).to have_content("Portal content")
+```
+
+Instead, you must interact directly with the portal element:
+
+```rb
+expect(my_section.portal).to have_content("Portal content")
+```
+
 ### Organizing your directory structure
 
 Ideally, we want every page object to be co-located with their matching spec files. Page tests are placed in `spec/pages` (not `spec/system/pages`), and we encourage you to organize the directory structure following the navigational structure of your app. The goal is to make it intuitive to find the tests for a page by mirroring the navigation structure of your application.
