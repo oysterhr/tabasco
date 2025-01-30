@@ -13,7 +13,9 @@ RSpec.describe Tabasco::Section do
 
   let(:section_klass) do
     ipsum_klass_local = ipsum_klass
+    section_klass_local = base_section_klass
     def_klass do
+      section_class section_klass_local
       attribute :user
       attribute :customer_id
 
@@ -34,6 +36,8 @@ RSpec.describe Tabasco::Section do
   let(:ipsum_klass) do
     def_klass(container_test_id: nil) { attribute :user }
   end
+
+  let(:base_section_klass) { nil }
 
   before do
     Capybara.current_session.visit("section_spec.html")
@@ -80,6 +84,43 @@ RSpec.describe Tabasco::Section do
       expect(section.other_ipsum.other_dolor).to be_a(described_class)
       expect(section.other_ipsum.class).not_to be(ipsum_klass)
       expect(section.other_ipsum).not_to respond_to(:dolor)
+    end
+  end
+
+  describe "with a custom section class" do
+    let(:base_section_klass) { Class.new(described_class) }
+
+    it "assigns the base section class to inline sections and their children" do
+      section = section_klass.load(user: "John", customer_id: 123)
+
+      expect(section.lorem).to be_a(base_section_klass)
+      expect(section.lorem.amet_consectuter).to be_a(base_section_klass)
+    end
+
+    it "does not override concrete class sections" do
+      section = section_klass.load(user: "John", customer_id: 123)
+
+      expect(section.ipsum).to be_a(ipsum_klass)
+      expect(section.ipsum).not_to be_a(base_section_klass)
+    end
+
+    context "when a child concrete class specifies its own base section" do
+      let(:ipsum_klass) do
+        the_base_section_klass = concrete_class_base_section_klass
+        def_klass(container_test_id: nil) do
+          section_class the_base_section_klass
+        end
+      end
+
+      let(:concrete_class_base_section_klass) { Class.new(described_class) }
+
+      it "respects the child's base section" do
+        section = section_klass.load(user: "John", customer_id: 123)
+
+        expect(section.ipsum).to be_a(ipsum_klass)
+        expect(section.ipsum.dolor).to be_a(concrete_class_base_section_klass)
+        expect(section.ipsum.dolor).not_to be_a(base_section_klass)
+      end
     end
   end
 
