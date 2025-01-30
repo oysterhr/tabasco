@@ -10,6 +10,7 @@ module Tabasco
     private_class_method :new # Use .load instead (or .visit for Page objects)
 
     class_attribute :_attributes, :test_id
+    class_attribute :_section_class
     class << self
       def load(...)
         new(...).tap(&:ensure_loaded)
@@ -18,6 +19,12 @@ module Tabasco
       def attribute(attr_name)
         attributes << attr_name.to_sym
         attr_reader attributes.last
+      end
+
+      def section_class(value = nil)
+        return _section_class if value.nil?
+
+        self._section_class = value
       end
 
       # We use class_attribute to ensure subclasses inherit their parent's configurations.
@@ -62,11 +69,12 @@ module Tabasco
         test_id = (test_id || name).to_s.tr("_", "-")
 
         parent_attributes = attributes
+        assigned_section_class = _section_class
 
         # Inherit from a concrete klass, so inline definitions can override behavior
         # without messing the actual concrete class
         klass = Class.new(klass) if klass
-        klass ||= Class.new(Section) do
+        klass ||= Class.new(section_class || Section) do
           parent_attributes.each do |attr_name|
             attribute attr_name
           end
@@ -84,6 +92,8 @@ module Tabasco
 
         # Configurations we want to apply to both inline or concrete classes
         klass.class_eval do
+          section_class assigned_section_class if klass.section_class.nil?
+
           # Although concrete classes specify a container test id, we want the local context
           # to have a higher precedence.
           container_test_id(test_id)
