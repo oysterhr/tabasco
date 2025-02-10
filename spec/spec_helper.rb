@@ -3,7 +3,7 @@
 require "pry"
 require "tabasco"
 
-Capybara.app = Rack::File.new("spec/fixtures")
+Capybara.app = Rack::Files.new("spec/fixtures")
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
